@@ -28,6 +28,7 @@ function list:new() {
         return 1
     fi
 }
+
 function list:get() {
     local -r IFS=$'\x20'
     local -n result="${1:?}" list="${2:?}"
@@ -40,9 +41,11 @@ function list:get() {
         return 1
     fi
 }
+
 function list:set() {
     "${FUNCNAME[0]%:*}:update" "${@}"
 }
+
 function list:append() {
     local -r IFS=$'\x20'
     local -i flag=0; [[ "${1}" == "-r" || "${1}" == "--raw" ]] && { flag=1; shift; }
@@ -62,6 +65,7 @@ function list:append() {
         return 1
     fi
 }
+
 function list:insert() {
     local -r IFS=$'\x20'
     local -i flag=0; [[ "${1}" == "-r" || "${1}" == "--raw" ]] && { flag=1; shift; }
@@ -84,6 +88,7 @@ function list:insert() {
         return 1
     fi
 }
+
 function list:update() {
     local -r IFS=$'\x20'
     local -i flag=0; [[ "${1}" == "-r" || "${1}" == "--raw" ]] && { flag=1; shift; }
@@ -113,6 +118,7 @@ function list:update() {
         return 1
     fi
 }
+
 function list:remove() {
     local -r IFS=$'\x20'
     local -n list="${1:?}"
@@ -126,6 +132,7 @@ function list:remove() {
         return 1
     fi
 }
+
 function list:delete() {
     local -r IFS=$'\x20'
     local -n list="${1:?}"
@@ -140,6 +147,7 @@ function list:delete() {
         return 1
     fi
 }
+
 function list:fullgc() {
     local -r IFS=$'\x20'
     local -i flag; [[ "${1}" == "-t" || "${1}" == "--try" ]] && { flag=1; shift; }
@@ -158,6 +166,7 @@ function list:fullgc() {
         return 1
     fi
 }
+
 function list:defrag() {
     local -r IFS=$'\x20'
     local -i flag; [[ "${1}" == "-t" || "${1}" == "--try" ]] && { flag=1; shift; }
@@ -186,6 +195,7 @@ function list:defrag() {
         return 1
     fi
 }
+
 function list:squash() {
     local -r IFS=$'\x20'
     local -i flag; [[ "${1}" == "-t" || "${1}" == "--try" ]] && { flag=1; shift; }
@@ -210,6 +220,7 @@ function list:squash() {
         return 1
     fi
 }
+
 function list:length() {
     local -r IFS=$'\x20'
     local -n result="${1:?}" list="${2:?}"
@@ -221,6 +232,7 @@ function list:length() {
         return 1
     fi
 }
+
 function list:equals() {
     local -r IFS=$'\x20'
     local -n listA="${1:?}" listB="${2:?}"
