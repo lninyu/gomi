@@ -1,4 +1,2 @@
-# gomi
-テストされていないゴミスクリプト
-多分動く
-知らん
+# untested garbage script
+Hey, does it work?
