@@ -133,12 +133,12 @@ function list:set() {
 }
 
 function list:get() {
-    local -n self="${1:?}" data="${3:?}"
+    local -n self="${1:?}" result="${3:?}"
     local -i index="${2:?}"
     local -a view=(${self[3]})
 
     if ((self[0] == 1818850164 && 0 <= (index <<= 1) && index < ${#view[@]})); then
-        data=("${self[@]:view[index]:view[index+1]}")
+        result=("${self[@]:view[index]:view[index+1]}")
     fi
 }
 
@@ -216,7 +216,7 @@ function list:forEach() {
 }
 
 function list:filter() {
-    local -n self="${1:?}" data="${2:?}"
+    local -n self="${1:?}" result="${2:?}"
     local -r func="${3:?}"
     local -a view=(${self[3]})
 
@@ -225,14 +225,14 @@ function list:filter() {
 
         for ((index = 0; index < ${#view[@]}; index += 2)); do
             if "${func}" "${self[@]:view[index]:view[index+1]}"; then
-                data+=("${self[@]:view[index]:view[index+1]}" [3]+="${#data[@]} ${view[index+1]} ")
+                result+=("${self[@]:view[index]:view[index+1]}" [3]+="${#result[@]} ${view[index+1]} ")
             fi
         done
     fi
 }
 
 function list:map() {
-    local -n self="${1:?}" data="${2:?}"
+    local -n self="${1:?}" result="${2:?}"
     local -r func="${3:?}"
     local -a view=(${self[3]}) temp
 
@@ -242,7 +242,7 @@ function list:map() {
         for ((index = 0; index < ${#view[@]}; index += 2)); do
             temp=()
             "${func}" temp "${self[@]:view[index]:view[index+1]}"
-            data+=("${temp[@]}" [3]+="${#data[@]} ${#temp[@]} ")
+            result+=("${temp[@]}" [3]+="${#result[@]} ${#temp[@]} ")
         done
     fi
 }
