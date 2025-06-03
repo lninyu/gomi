@@ -9,60 +9,87 @@ function list:new() {
 }
 
 function list:append() {
-    local -n self="${1:?}"
-    local -a view=(${self[3]})
+    case "${2:?}" in
+        -r|--raw)
+            local -n self="${1:?}"
+            local -ai view=(${self[3]})
 
-    case "${2}" in
-        -r|--raw) local -a data=("${@:3}") ;;
-        *) local -n data="${2:?}" ;;
+            if ((self[0] == 1818850164)); then
+                view+=(${#self[@]} ${#}-2)
+                self+=("${@:3}" [3]="${view[*]}")
+            fi ;;
+        *)
+            local -n self="${1:?}" data="${2:?}"
+            local -ai view=(${self[3]})
+
+            if ((self[0] == 1818850164)); then
+                view+=(${#self[@]} ${#data[@]})
+                self+=("${data[@]}" [3]="${view[*]}")
+            fi ;;
     esac
-
-    if ((self[0] == 1818850164)); then
-        view+=("${#self[@]}" "${#data[@]}")
-        self+=("${data[@]}" [3]="${view[*]}")
-    fi
 }
 
 function list:insert() {
-    local -n self="${1:?}"
     local -i pick="${2:?}"
-    local -a view=(${self[3]})
 
-    case "${3}" in
-        -r|--raw) local -a data=("${@:4}") ;;
-        *) local -n data="${3:?}" ;;
+    case "${3:?}" in
+        -r|--raw)
+            local -n self="${1:?}"
+            local -ai view=(${self[3]})
+
+            if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick <= ${#view[@]})); then
+                view+=([pick]=${#self[@]} ${#}-3 ${view[@]:pick})
+                self+=("${@:4}" [3]="${view[*]}")
+            fi ;;
+        *)
+            local -n self="${1:?}" data="${3:?}"
+            local -ai view=(${self[3]})
+
+            if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick <= ${#view[@]})); then
+                view+=([pick]=${#self[@]} ${#data[@]} ${view[@]:pick})
+                self+=("${data[@]}" [3]="${view[*]}")
+            fi ;;
     esac
-
-    if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick <= ${#view[@]})); then
-        view+=([pick]="${#self[@]}" "${#data[@]}" "${view[@]:pick}")
-        self+=("${data[@]}" [3]="${view[*]}")
-    fi
 }
 
 function list:update() {
-    local -n self="${1:?}"
     local -i pick="${2:?}" size
-    local -a view=(${self[3]})
 
-    case "${3}" in
-        -r|--raw) local -a data=("${@:4}") ;;
-        *) local -n data="${3:?}" ;;
+    case "${3:?}" in
+        -r|--raw)
+            local -n self="${1:?}"
+            local -a view=(${self[3]})
+
+            if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick < ${#view[@]})); then
+                if ((0 <= (size = ${#} - 3) && size <= view[pick+1])); then
+                    ((self[2] += view[pick+1] - size))
+                    view[pick+1]=${size}
+                    self+=([view[pick] ]="${4}" "${@:5}" [3]="${view[*]}")
+                else
+                    ((self[2] += size - view[pick+1]))
+                    view+=([pick]=${#self[@]} ${size})
+                    self+=("${@:4}" [3]="${view[*]}")
+                fi
+            fi ;;
+        *)
+            local -n self="${1:?}" data="${3:?}"
+            local -ai view=(${self[3]})
+
+            if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick < ${#view[@]})); then
+                if ((0 <= (size = ${#data[@]}) && size <= view[pick+1])); then
+                    ((self[2] += view[pick+1] - size))
+                    view[pick+1]=${size}
+                    self+=([view[pick] ]="${data[0]}" "${data[@]:1}" [3]="${view[*]}")
+                else
+                    ((self[2] += size - view[pick+1]))
+                    view+=([pick]=${#self[@]} ${size})
+                    self+=("${data[@]}" [3]="${view[*]}")
+                fi
+            fi ;;
     esac
 
-    if ((self[0] == 1818850164 && 0 <= (pick <<= 1) && pick < ${#view[@]})); then
-        if ((0 <= (size = ${#data[@]}) && size <= view[pick+1])); then
-            ((self[2] += view[pick+1] - size))
-            view[pick+1]="${size}"
-            self+=([view[pick] ]="${data[0]}" "${data[@]:1}" [3]="${view[*]}")
-        else
-            ((self[2] += size - view[pick+1]))
-            view+=([pick]="${#self[@]}" "${size}")
-            self+=("${data[@]}" [3]="${view[*]}")
-        fi
-
-        if ((self[1] && self[1] <= self[2])); then
-            list:defrag "${1}"
-        fi
+    if ((self[1] && self[1] <= self[2])); then
+        list:defrag "${1}"
     fi
 }
 
