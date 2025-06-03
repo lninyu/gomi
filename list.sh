@@ -1,3 +1,4 @@
+# wow many pickles
 function list:new() {
     local -n self="${1:?}"
 
