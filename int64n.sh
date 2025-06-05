@@ -1,16 +1,17 @@
 function int64n:fill() {
     local -n _0="${1:?}"; _0=()
-    local -i size="${2:-0}"
-    local -a temp=()
+    local -i _2=${2//[^0-9]/}
+    local -ai temp=(${3:-0})
 
-    temp+=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
-    temp+=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)
+    temp+=(${temp[@]} ${temp[@]} ${temp[@]})
+    temp+=(${temp[@]} ${temp[@]} ${temp[@]})
+    temp+=(${temp[@]} ${temp[@]} ${temp[@]})
 
-    until (((size -= 64) & 0x8000000000000000)); do
+    until (((_2 -= 64) & 0x8000000000000000)); do
         _0+=(${temp[@]})
     done
 
-    _0+=(${temp[@]::64 + size})
+    _0+=(${temp[@]::64 + _2})
 }
 function int64n:set() { :;}
 function int64n:get() { :;}
