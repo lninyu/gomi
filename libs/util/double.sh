@@ -10,9 +10,9 @@ function double.toRaw() {
 
 function double.fromRaw() {
     local -n result="${1:?}"
-    local -i i64="${2:?}" a b
+    local -i a b
 
-    if ((a = i64 << 1 & 0xfffffffffffff, b = (i64 >> 52) - 1023 & 0x7ff, i64 & 0x8000000000000000))
+    if ((a = ${2:?} << 1 & 0xfffffffffffff, b = (${2} >> 52) - 1023 & 0x7ff, ${2} & 0x8000000000000000))
         then printf -v result -- "-0x1.%xp+%d" ${a} ${b}
         else printf -v result "0x1.%xp+%d" ${a} ${b}
     fi
